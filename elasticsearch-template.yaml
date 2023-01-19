@@ -1,0 +1,198 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: elasticsearch-template
+  annotations:
+    openshift.io/display-name: "Elasticsearch"
+    description: >-
+      Template for deploying an Elasticsearch cluster within OpenShift.
+      
+      Requires passwords, authentication headers and certificates to be input in Base64 format.
+    iconClass: "icon-elastic"
+    tags: "elasticsearch,lucene,ir"
+parameters:
+- name: APP_NAME
+  description: Application name used to group resources and form URLs
+  value: ds-es
+  required: true
+- name: REPLICAS
+  description: Number of replicas (min 3)
+  value: "3"
+  required: true
+- name: STORAGE_SIZE
+  description: Size of the storage claim per replica
+  value: 10Gi
+  required: true
+- name: ES_DOCKER_IMAGE_VERSION
+  description: Elasticsearch docker image version
+  value: 8.6.0
+  required: true
+- name: ELASTIC_PASSWORD
+  description: Base64 encoded Elasticsearch root password
+  required: true
+- name: ELASTIC_BASIC_AUTH
+  description: Base64 encoded basic authentication string of the form "elastic:[password]"
+  required: true
+- name: ELASTIC_CERT
+  description: Base64 encoded Elasticsearch security certificate for internode communication (should be fine to leave as is, but see https://www.elastic.co/guide/en/elasticsearch/reference/current/certutil.html on generating a new one)
+  value: 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
+  required: true
+objects:
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    labels:
+      app: "${APP_NAME}"
+    name: "${APP_NAME}"
+  spec:
+    host: "${APP_NAME}"
+    port:
+      targetPort: 9200-tcp
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    to:
+      kind: Service
+      name: "${APP_NAME}"
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: "${APP_NAME}"
+    name: "${APP_NAME}"
+  spec:
+    ports:
+    - name: 9200-tcp
+      port: 9200
+      protocol: TCP
+      targetPort: 9200
+    - name: 9300-tcp
+      port: 9300
+      protocol: TCP
+      targetPort: 9300
+    selector:
+      app: "${APP_NAME}"
+- apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    labels:
+      app: "${APP_NAME}"
+      service: elasticsearch
+    name: "${APP_NAME}"
+  spec:
+    podManagementPolicy: Parallel
+    replicas: "${REPLICAS}"
+    selector:
+      matchLabels:
+        app: "${APP_NAME}"
+        service: elasticsearch
+    serviceName: elasticsearch
+    template:
+      metadata:
+        labels:
+          app: "${APP_NAME}"
+          service: elasticsearch
+      spec:
+        containers:
+        - env:
+          - name: cluster.name
+            value: "${APP_NAME}"
+          - name: node.name
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: cluster.initial_master_nodes
+            value: "${APP_NAME}-0,${APP_NAME}-1,${APP_NAME}-2"
+          - name: discovery.seed_hosts
+            value: "${APP_NAME}-0.${APP_NAME},${APP_NAME}-1.${APP_NAME},${APP_NAME}-2.${APP_NAME}"
+          - name: node.store.allow_mmap
+            value: "false"
+          - name: http.cors.enabled
+            value: "true"
+          - name: http.cors.allow-origin
+            value: '"*"'
+          - name: http.cors.allow-headers
+            value: X-Requested-With,Content-Type,Content-Length,Authorization
+          - name: ELASTIC_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "${APP_NAME}"
+                key: password
+          - name: xpack.security.transport.ssl.enabled
+            value: "true"
+          - name: xpack.security.transport.ssl.keystore.path
+            value: /usr/share/elasticsearch/config/secret/cert
+          - name: xpack.security.transport.ssl.verification_mode
+            value: certificate
+          image: "docker.elastic.co/elasticsearch/elasticsearch:${ES_DOCKER_IMAGE_VERSION}"
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              httpHeaders:
+              - name: Authorization
+                value: "Basic ${ELASTIC_BASIC_AUTH}"
+              path: /
+              port: 9200
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: elasticsearch
+          ports:
+          - containerPort: 9200
+            name: http
+            protocol: TCP
+          - containerPort: 9300
+            name: tcp
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              httpHeaders:
+              - name: Authorization
+                value: "Basic ${ELASTIC_BASIC_AUTH}"
+              path: /
+              port: 9200
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            limits:
+              memory: 8Gi
+          volumeMounts:
+          - mountPath: /usr/share/elasticsearch/data
+            name: data
+          - mountPath: /usr/share/elasticsearch/config/secret
+            name: secrets
+            readOnly: true
+        restartPolicy: Always
+        volumes:
+        - name: secrets
+          secret:
+            defaultMode: 420
+            secretName: "${APP_NAME}"
+    volumeClaimTemplates:
+    - metadata:
+        name: data
+        app: "${APP_NAME}"
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: "${STORAGE_SIZE}"
+- apiVersion: v1
+  kind: Secret
+  data:
+    cert: "${ELASTIC_CERT}"
+    password: "${ELASTIC_PASSWORD}"
+  metadata:
+    labels:
+      app: "${APP_NAME}"
+    name: "${APP_NAME}"
+  type: Opaque
