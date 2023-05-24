@@ -21,11 +21,11 @@ parameters:
   required: true
 - name: STORAGE_SIZE
   description: Size of the storage claim per replica
-  value: 10Gi
+  value: 60Gi
   required: true
 - name: ES_DOCKER_IMAGE_VERSION
   description: Elasticsearch docker image version
-  value: 8.6.0
+  value: 8.5.2
   required: true
 - name: ELASTIC_PASSWORD
   description: Base64 encoded Elasticsearch root password
@@ -45,6 +45,7 @@ objects:
       app: "${APP_NAME}"
     name: "${APP_NAME}"
   spec:
+    host: "${APP_NAME}.rahtiapp.fi"
     port:
       targetPort: 9200-tcp
     tls:
@@ -124,7 +125,7 @@ objects:
             value: /usr/share/elasticsearch/config/secret/cert
           - name: xpack.security.transport.ssl.verification_mode
             value: certificate
-          image: "docker.elastic.co/elasticsearch/elasticsearch:${ES_DOCKER_IMAGE_VERSION}"
+          image: "vvaara/elastic-custom:${ES_DOCKER_IMAGE_VERSION}"
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 3

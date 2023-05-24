@@ -1,0 +1,54 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: ds-es
+  name: ds-kibana
+spec:
+  replicas: 1
+  selector:
+    name: ds-kibana
+    #app: kibana
+    #deploymentconfig: kibana
+  template:
+    metadata:
+      labels:
+        name: ds-kibana
+        #app: kibana
+        #deploymentconfig: kibana
+    spec:
+      containers:
+        - env:
+            - name: ELASTICSEARCH_USERNAME
+              value: kibana_system
+            - name: ELASTICSEARCH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: ds-es
+            - name: ELASTICSEARCH_URL
+              value: 'http://ds-es:9200/'
+            - name: ELASTICSEARCH_HOSTS
+              value: 'http://ds-es:9200/'
+            - name: server.publicBaseUrl
+              value: 'https://ds-kibana-octavo2.rahtiapp.fi/'
+          image: >-
+            docker.elastic.co/kibana/kibana@sha256:91451546e34c65573580b95a583e2224a8ac3f811f86584921d802bc7c1a55b1
+          imagePullPolicy: IfNotPresent
+          name: kibana
+          ports:
+            - containerPort: 5601
+              protocol: TCP
+  triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - kibana
+        from:
+          kind: ImageStreamTag
+          name: 'kibana:8.5.2'
+          namespace: octavo2
+      type: ImageChange
+  strategy:
+    type: Rolling
