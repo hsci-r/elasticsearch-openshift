@@ -6,6 +6,10 @@ Setup instructions and scripts for Elasticsearch and Kibana on CSC Rahti.
 
 These are imported into Rahti to setup the environments. Ideally no manual input needed (still working on that).
 
+### Passwords
+
+Currently requires entering passwords manually. In Rahti, for ELASTIC_PASSWORD and ELASTIC_BASIC_AUTH these need to be Base64 encoded. Eg. in Linux shell: `echo 'this-is-my-password' | base64` and for BASIC_AUTH `echo 'elastic:this-is-my-password' | base64`, or use a site like: https://www.base64encode.org/ .
+
 ### TODO
 
 Elasticsearch and Kibana need to connect at setup. Kibana connects to ES with the user `kibana_system`. The user is automatically generated, but password for this user needs to be set. Currently the easiest solution seems to be with a POST request:
