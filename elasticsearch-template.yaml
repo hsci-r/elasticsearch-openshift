@@ -186,6 +186,8 @@ objects:
         resources:
           requests:
             storage: "${STORAGE_SIZE}"
+        storageClassName: standard-rwo
+        # storage class for Cinder on Rahti. The default wihout specifying a class is GlusterFS.
 - apiVersion: v1
   kind: Secret
   data:
