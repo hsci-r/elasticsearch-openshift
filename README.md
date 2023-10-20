@@ -2,6 +2,8 @@
 
 Setup instructions and scripts for Elasticsearch and Kibana on CSC Rahti.
 
+Instructions for use and best practices at [/documentation](documentation) -folder in this repository.
+
 ## YAML templates
 
 These are imported into Rahti to setup the environments. Ideally no manual input needed (still working on that).
