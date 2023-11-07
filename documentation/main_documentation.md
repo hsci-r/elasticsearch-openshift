@@ -45,3 +45,6 @@ This does seem to have a significant effect. The test results for the legentic s
 
 5 threads does not seem to be faster than 4, even with 5 nodes. Possibly Elasticsearch reserves a node for non-indexing requests?
 
+## Disk Space Optimization
+
+See that document ...
