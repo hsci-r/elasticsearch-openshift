@@ -2,6 +2,8 @@
 
 This has been succesfully done through the Python client as well.
 
+The code used for indexing the various datasets can be found at https://github.com/villevaara/dariah-elastic-indexer .
+
 ### Expanding storage (PVC)
 
 The current practice for increasing pod persistent volume claim (PVC) size is as follows:
