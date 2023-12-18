@@ -13,7 +13,7 @@ This is strongly not recommanded, but can be done. There are other ways to retri
 
 **NOTE!** This turns out not to have any effect on storage space. See: https://discuss.elastic.co/t/removing-source-increases-size-of-index/283699/3 and from there: https://github.com/elastic/elasticsearch/issues/41628#issuecomment-488155381 .
 
-Additionally, when tryoing to set the `index.soft_deletes.enabled` the API for 8.5.x responds: `elasticsearch.BadRequestError: BadRequestError(400, 'illegal_argument_exception', 'Creating indices with soft-deletes disabled is no longer supported. Please do not specify a value for setting [index.soft_deletes.enabled].')`.
+Additionally, when trying to set the `index.soft_deletes.enabled` the API for 8.5.x responds: `elasticsearch.BadRequestError: BadRequestError(400, 'illegal_argument_exception', 'Creating indices with soft-deletes disabled is no longer supported. Please do not specify a value for setting [index.soft_deletes.enabled].')`.
 
 In light of the above, the following is moot information, but kept here for possible future use:
 
