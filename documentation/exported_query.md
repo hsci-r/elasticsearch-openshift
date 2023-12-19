@@ -17,3 +17,11 @@ This is a large social media dataset, access details below.
 **pwd:** leg-view
 
 The same credentials for the Elasticsearch API.
+
+### NLF periodicals
+
+Dataset of periodical publications from the National Library of Finland digital collections.
+
+**url:** https://nlf-es-kibana.rahtiapp.fi/s/nlf-periodicals/app/home#/
+**usr:** nlf-periodicals-viewer
+**pwd:** nlf-per-view
