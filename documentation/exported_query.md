@@ -10,6 +10,12 @@ To easily get a query from Kibana to Elasticsearch, follow these steps:
 
 Collection of datasets indexed in our Elasticsearch & Kibana -deployment.
 
+Generic viewer user:
+
+* **url:** https://nlf-es-kibana.rahtiapp.fi/spaces/space_selector
+* **usr:** viewer-generic
+* **pwd:** gen-view
+
 ---
 
 ### Legentic dataset
