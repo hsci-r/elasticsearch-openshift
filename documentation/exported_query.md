@@ -18,6 +18,8 @@ This is a large social media dataset, access details below.
 
 The same credentials for the Elasticsearch API.
 
+---
+
 ### NLF periodicals
 
 Dataset of periodical publications from the National Library of Finland digital collections.
