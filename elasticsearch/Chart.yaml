@@ -1,0 +1,6 @@
+description: |-
+  Template for deploying an Elasticsearch cluster within OpenShift.
+  Requires passwords, authentication headers and certificates to be input in Base64 format.
+name: elasticsearch-template
+tags: elasticsearch,lucene,ir
+version: v0.0.1

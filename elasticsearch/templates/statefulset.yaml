@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: {{ .Values.appName }}
+    service: elasticsearch
+  name: {{ .Values.appName }}
+spec:
+  podManagementPolicy: Parallel
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+      service: elasticsearch
+  serviceName: {{ .Values.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+        service: elasticsearch
+    spec:
+      containers:
+      - env:
+        - name: cluster.name
+          value: {{ .Values.appName }}
+        - name: node.name
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: cluster.initial_master_nodes
+          value: {{ .Values.appName }}-0,{{ .Values.appName }}-1,{{ .Values.appName }}-2
+        - name: discovery.seed_hosts
+          value: {{ .Values.appName }}-0.{{ .Values.appName }},{{ .Values.appName }}-1.{{ .Values.appName }},{{ .Values.appName }}-2.{{ .Values.appName }}
+        - name: node.store.allow_mmap
+          value: "false"
+        - name: http.cors.enabled
+          value: "true"
+        - name: http.cors.allow-origin
+          value: '"*"'
+        - name: http.cors.allow-headers
+          value: X-Requested-With,Content-Type,Content-Length,Authorization
+        - name: ELASTIC_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: {{ .Values.appName }}
+        - name: xpack.security.transport.ssl.enabled
+          value: "true"
+        - name: xpack.security.transport.ssl.keystore.path
+          value: /usr/share/elasticsearch/config/secret/cert
+        - name: xpack.security.transport.ssl.verification_mode
+          value: certificate
+        image: vvaara/elastic-custom:{{ .Values.esDockerImageVersion }}
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            httpHeaders:
+            - name: Authorization
+              value: Basic {{ .Values.elasticBasicAuth | b64enc }}
+            path: /
+            port: 9200
+            scheme: HTTP
+          initialDelaySeconds: 90
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 20
+        name: elasticsearch
+        ports:
+        - containerPort: 9200
+          name: http
+          protocol: TCP
+        - containerPort: 9300
+          name: tcp
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 5
+          httpGet:
+            httpHeaders:
+            - name: Authorization
+              value: Basic {{ .Values.elasticBasicAuth | b64enc }}
+            path: /
+            port: 9200
+            scheme: HTTP
+          initialDelaySeconds: 90
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 20
+        resources:
+          limits:
+            memory: 4Gi
+        volumeMounts:
+        - mountPath: /usr/share/elasticsearch/data
+          name: data
+        - mountPath: /usr/share/elasticsearch/config/secret
+          name: secrets
+          readOnly: true
+      restartPolicy: Always
+      volumes:
+      - name: secrets
+        secret:
+          defaultMode: 420
+          secretName: {{ .Values.appName }}
+  volumeClaimTemplates:
+  - metadata:
+      labels:
+        app: {{ .Values.appName }}
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ .Values.storageSize }}
+      storageClassName: standard-csi
