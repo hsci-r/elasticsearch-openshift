@@ -2,6 +2,10 @@
 
 Collection of instructions and best practices for using Elasticsearch in data exploration and subsetting. Originally in the context of the DARIAH-FI project.
 
+## Intalling on CSC Rahti2
+
+See [**install_on_rahti2.md**](install_on_rahti2.md) for instructions and observations on installing ES and Kibana on Rahti2. 
+
 ## Subsetting and retrieving documents
 
 ### Elasticsearch API
