@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: {{ .Values.appName }}
+    service: kibana
+  name: {{ .Values.appName }}
+spec:
+  podManagementPolicy: Parallel
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+      service: kibana
+  serviceName: {{ .Values.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+        service: kibana
+    spec:
+      containers:
+        - env:
+          - name: cluster.name
+            value: {{ .Values.appName }}
+          - name: ELASTICSEARCH_USERNAME
+            value: kibana_system
+          # - name: KIBANA_PASSWORD
+          #   value: "thisisatest"
+          - name: ELASTICSEARCH_PASSWORD
+            value: "thisisatest"
+            # valueFrom:
+            #   secretKeyRef:
+            #     key: password
+            #     name: {{ .Values.esAppName }}
+          - name: ELASTICSEARCH_URL
+            value: {{ .Values.esUrl }}
+          - name: ELASTICSEARCH_HOSTS
+            value: {{ .Values.esUrl }}
+          - name: SERVER_PUBLICBASEURL
+            value: "https://{{ .Values.appName }}.2.rahtiapp.fi:5601"
+          image: {{ .Values.image }}:{{ .Values.imageTag }}
+          imagePullPolicy: IfNotPresent
+          name: kibana
+          ports:
+            - containerPort: 5601
+              protocol: TCP
+  # triggers:
+  #   - type: ConfigChange
+  #   - imageChangeParams:
+  #       automatic: true
+  #       containerNames:
+  #         - kibana
+  #       from:
+  #         kind: ImageStreamTag
+  #         name: 'kibana:{{ .Values.imageTag }}'
+  #         namespace: dariah-fi
+  #     type: ImageChange
+  # strategy:
+  #   type: Rolling

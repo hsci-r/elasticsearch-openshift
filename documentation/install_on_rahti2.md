@@ -26,3 +26,13 @@ https://discuss.elastic.co/t/official-elasticsearch-helm-chart-unable-to-install
 **The method of creating a custom image is the recommended one, apparently. This is fortunate, as I couldn't get the init container -method to work. -Ville**
 
 The custom image is currently at `vvaara/elastic-custom:[es-version]`
+
+
+## Kibana connection
+
+This is troublesome. Apparently oyu should be able to specify a password for the kibana_system user, but for some reason that does not work. https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#next-getting-started-tls-docker
+
+Maybe the password could be set as part of some init script:
+
+https://www.elastic.co/guide/en/elasticsearch/reference/current/change-passwords-native-users.html
+

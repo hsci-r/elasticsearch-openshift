@@ -1,0 +1,17 @@
+appName: dariahfi-kibana
+esAppName: dariahfi-es
+esUrl: "http://dariahfi-es:9200"
+replicas: 1
+
+# these are used in the statefulset.yaml
+image: "docker.elastic.co/kibana/kibana"
+imageTag: "8.5.2"
+
+
+# resources:
+#   requests:
+#     cpu: "1000m"
+#     memory: "2Gi"
+#   limits:
+#     cpu: "1000m"
+#     memory: "2Gi"

@@ -45,6 +45,8 @@ spec:
             secretKeyRef:
               key: password
               name: {{ .Values.appName }}
+        - name: KIBANA_PASSWORD  # This does not seem to work atm. see /documentation/install_on_rahti2.md
+          value: "thisisatest"
         - name: xpack.security.transport.ssl.enabled
           value: "true"
         - name: xpack.security.transport.ssl.keystore.path

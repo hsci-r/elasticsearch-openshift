@@ -1,0 +1,7 @@
+apiVersion: v2
+name: kibana
+description: Helm chart for Kibana
+type: application
+version: 0.1.0
+appVersion: "8.5.2"
+icon: https://helm.elastic.co/icons/kibana.png
