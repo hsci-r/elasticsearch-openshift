@@ -10,8 +10,9 @@ The steps in nutshell:
    * Login command can be copy pasted from Rahti2 web interface. https://console-openshift-console.apps.2.rahti.csc.fi/ Top right menu: 'Copy login command'.
 2. run the helm (https://helm.sh/docs/intro/install/) install command in this repo's root.
    * helm install [name-of-app-on-rahti] elasticsearch/
+     * eg. `helm install dariahfi-es-test elasticsearch/`
 
-### Usefull Helm commands
+### Useful Helm commands
 
 * Delete previous install: `helm uninstall dariahfi-es-test`
 * PVCsneed to be separately deleted with oc: `oc delete pvc/data-es-test-0`, etc ...
@@ -20,12 +21,60 @@ The steps in nutshell:
 
 Plugins can either be added by creating a custom image, or using init containers to install plugins. Both have their pros and cons, as laid out at https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-bundles-plugins.html
 
-Here on how to add plugins with Helm chart:
-https://discuss.elastic.co/t/official-elasticsearch-helm-chart-unable-to-install-plugins/275593
-
-**The method of creating a custom image is the recommended one, apparently. This is fortunate, as I couldn't get the init container -method to work. -Ville**
+The method of creating a custom image is the recommended one, apparently. Newertheless, there are upside to using the intiContainer merhods: namely not needing to use and udate a custom image.
 
 The custom image is currently at `vvaara/elastic-custom:[es-version]`
+
+### Using initContainer
+
+To install a plugin with an initContainer, the guidelines laid out at https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-init-containers-plugin-downloads.html need to be expanded with the solution found at https://discuss.elastic.co/t/official-elasticsearch-helm-chart-unable-to-install-plugins/275593 .
+
+The initContainer, when not using the ready made elasticcloud on Kubernes -servive offered by Elastic, needs to be set up to share a mounted volume with the main container. E.g. (from the statefulset.yaml):
+
+```
+      initContainers:
+      # init container that installs Elastic plugins
+      - name: init-install-plugins
+        command:
+        - sh
+        - -c
+        - |
+          bin/elasticsearch-plugin remove --purge mapper-annotated-text
+          bin/elasticsearch-plugin install --batch mapper-annotated-text
+        image: docker.elastic.co/elasticsearch/elasticsearch:{{ .Values.esDockerImageVersion }}
+        volumeMounts:
+        - mountPath: /usr/share/elasticsearch/data
+          name: data
+        - mountPath: /usr/share/elasticsearch/plugins
+          name: plugins
+        - mountPath: /usr/share/elasticsearch/config/secret
+          name: secrets
+          readOnly: true
+```
+... and same under container:
+```
+      containers:
+      # [...] some lines cut out for clarity
+        volumeMounts:
+        - mountPath: /usr/share/elasticsearch/data
+          name: data
+        - mountPath: /usr/share/elasticsearch/plugins
+          name: plugins
+        - mountPath: /usr/share/elasticsearch/config/secret
+          name: secrets
+          readOnly: true
+```
+... and under their shared volumes the plugins path needs to be created (empty?).
+```
+        volumeMounts:
+        - mountPath: /usr/share/elasticsearch/data
+          name: data
+        - mountPath: /usr/share/elasticsearch/plugins
+          name: plugins
+        - mountPath: /usr/share/elasticsearch/config/secret
+          name: secrets
+          readOnly: true
+```
 
 
 ## Kibana connection

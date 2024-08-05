@@ -19,6 +19,24 @@ spec:
         app: {{ .Values.appName }}
         service: elasticsearch
     spec:
+      initContainers:
+      # init container that installs Elastic plugins
+      - name: init-install-plugins
+        command:
+        - sh
+        - -c
+        - |
+          bin/elasticsearch-plugin remove --purge mapper-annotated-text
+          bin/elasticsearch-plugin install --batch mapper-annotated-text
+        image: docker.elastic.co/elasticsearch/elasticsearch:{{ .Values.esDockerImageVersion }}
+        volumeMounts:
+        - mountPath: /usr/share/elasticsearch/data
+          name: data
+        - mountPath: /usr/share/elasticsearch/plugins
+          name: plugins
+        - mountPath: /usr/share/elasticsearch/config/secret
+          name: secrets
+          readOnly: true
       containers:
       - env:
         - name: cluster.name
@@ -53,7 +71,8 @@ spec:
           value: /usr/share/elasticsearch/config/secret/cert
         - name: xpack.security.transport.ssl.verification_mode
           value: certificate
-        image: vvaara/elastic-custom:{{ .Values.esDockerImageVersion }}
+        # image: vvaara/elastic-custom:{{ .Values.esDockerImageVersion }}
+        image: docker.elastic.co/elasticsearch/elasticsearch:{{ .Values.esDockerImageVersion }}
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
@@ -95,6 +114,8 @@ spec:
         volumeMounts:
         - mountPath: /usr/share/elasticsearch/data
           name: data
+        - mountPath: /usr/share/elasticsearch/plugins
+          name: plugins
         - mountPath: /usr/share/elasticsearch/config/secret
           name: secrets
           readOnly: true
@@ -104,6 +125,8 @@ spec:
         secret:
           defaultMode: 420
           secretName: {{ .Values.appName }}
+      - name: plugins
+        emptyDir: {}
   volumeClaimTemplates:
   - metadata:
       labels:
