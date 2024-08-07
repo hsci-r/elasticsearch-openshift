@@ -1,2 +1,3 @@
 *.crt
 elasticsearch/values.yaml
+kibana/values.yaml

@@ -1,0 +1,24 @@
+# App names. used for routes, and linking with ES.
+appName: dariahfi-kibana
+esAppName: dariahfi-es
+esUrl: "http://dariahfi-es:9200"
+replicas: 1
+
+# Kibana image to use.
+image: "docker.elastic.co/kibana/kibana"
+imageTag: "8.5.2"
+
+# For setting Kibana linking with elastic. This has to be the same as in elastic/values.yaml
+elasticBasicAuth: elastic:your-elastic-password  # change these to the elastic login credentials
+
+# Kibana system user password, only used by system
+kibanaSystemPassword: your-kibana-password  # change this to a password for kibana_system -user. 
+
+# No need to necessarily specify resources. Left here commented if needed.
+# resources:
+#   requests:
+#     cpu: "1000m"
+#     memory: "2Gi"
+#   limits:
+#     cpu: "1000m"
+#     memory: "2Gi"

@@ -19,20 +19,29 @@ spec:
         app: {{ .Values.appName }}
         service: kibana
     spec:
+      initContainers:
+      # init container that sets kibana_system password
+      - name: init-set-password
+        image: curlimages/curl:latest
+        command:
+          - curl
+          - -X
+          - POST
+          - -H
+          - 'Content-Type: application/json'
+          - -u
+          - '{{ .Values.elasticBasicAuth }}'
+          - -d
+          - '{{ `{ "password" : "`}}{{ .Values.kibanaSystemPassword }}{{ `" }` }}'
+          - 'https://{{ .Values.esAppName }}.2.rahtiapp.fi/_security/user/kibana_system/_password'
       containers:
         - env:
           - name: cluster.name
             value: {{ .Values.appName }}
           - name: ELASTICSEARCH_USERNAME
             value: kibana_system
-          # - name: KIBANA_PASSWORD
-          #   value: "thisisatest"
           - name: ELASTICSEARCH_PASSWORD
-            value: "thisisatest"
-            # valueFrom:
-            #   secretKeyRef:
-            #     key: password
-            #     name: {{ .Values.esAppName }}
+            value: {{ .Values.kibanaSystemPassword }}
           - name: ELASTICSEARCH_URL
             value: {{ .Values.esUrl }}
           - name: ELASTICSEARCH_HOSTS
